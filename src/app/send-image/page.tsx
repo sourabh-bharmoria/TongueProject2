@@ -71,16 +71,20 @@ export default function TongueAnalyzer() {
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob((blob) => {
-        if (blob) {
-          setImage(blob);
-          setImageURL(URL.createObjectURL(blob));
-        }
-        setIsCameraOpen(false);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            setImage(blob);
+            setImageURL(URL.createObjectURL(blob));
+          }
+          setIsCameraOpen(false);
 
-        const stream = video.srcObject as MediaStream;
-        stream?.getTracks().forEach((track) => track.stop());
-      }, "image/jpeg", 0.95);
+          const stream = video.srcObject as MediaStream;
+          stream?.getTracks().forEach((track) => track.stop());
+        },
+        "image/jpeg",
+        0.95
+      );
     }
   };
 
@@ -234,12 +238,10 @@ export default function TongueAnalyzer() {
           <div className="flex justify-center mt-4">
             <LoaderButton
               onClick={analyzeTongue}
-              isLoading={isLoading}
-              loadingText="Analyzing..."
-              icon={<ScanEye size={18} />}
-            >
-              Analyze Tongue
-            </LoaderButton>
+              loading={isLoading}
+              buttonText="Analyze Tongue"
+              buttonIcon={<ScanEye size={18} />}
+            />
           </div>
         )}
 
@@ -264,19 +266,24 @@ export default function TongueAnalyzer() {
           <div className="mb-6">
             <h3 className="text-xl font-semibold mb-2">🔍 Crack Detection</h3>
             <div className="bg-gray-50 p-4 rounded-md">
-             {Object.entries(results.crack.class_scores).map(([className, score]) => (
-  <div key={className} className="flex justify-between mb-2">
-    <span>{className}:</span>
-    <span className="font-medium">{(score as number).toFixed(3)}</span>
-  </div>
-))}
+              {Object.entries(results.crack.class_scores).map(
+                ([className, score]) => (
+                  <div key={className} className="flex justify-between mb-2">
+                    <span>{className}:</span>
+                    <span className="font-medium">
+                      {(score as number).toFixed(3)}
+                    </span>
+                  </div>
+                )
+              )}
 
               <div className="mt-3 pt-3 border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">Total Crack Score:</span>
                   <span
                     className={`font-bold ${
-                      getScoreSeverity(results.crack.total_crack_score) === "low"
+                      getScoreSeverity(results.crack.total_crack_score) ===
+                      "low"
                         ? "text-green-600"
                         : getScoreSeverity(results.crack.total_crack_score) ===
                           "medium"
@@ -295,16 +302,22 @@ export default function TongueAnalyzer() {
           <div className="mb-6">
             <h3 className="text-xl font-semibold mb-2">🧪 Fungi Detection</h3>
             <div className="bg-gray-50 p-4 rounded-md">
-             {Object.entries(results.fungi.class_scores).map(([className, score]) => (
-  <div key={className} className="flex justify-between mb-2">
-    <span>{className}:</span>
-    <span className="font-medium">{(score as number).toFixed(3)}</span>
-  </div>
-))}
+              {Object.entries(results.fungi.class_scores).map(
+                ([className, score]) => (
+                  <div key={className} className="flex justify-between mb-2">
+                    <span>{className}:</span>
+                    <span className="font-medium">
+                      {(score as number).toFixed(3)}
+                    </span>
+                  </div>
+                )
+              )}
 
               <div className="mt-3 pt-3 border-t border-gray-200">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold">Weighted Average Fungi Score:</span>
+                  <span className="font-semibold">
+                    Weighted Average Fungi Score:
+                  </span>
                   <span
                     className={`font-bold ${
                       getScoreSeverity(results.fungi.weighted_average_score) ===
